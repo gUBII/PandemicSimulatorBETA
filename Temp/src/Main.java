@@ -28,7 +28,7 @@ class Main extends JFrame {
         Simulant selected;
         Color[][] graph;
         int graphX;
-      
+        private long lastUpdateTime;
         public App() {
             setPreferredSize(new Dimension(Main.WIDTH, Main.HEIGHT+Main.GRAPH_HEIGHT));
             this.setFocusable(true);
@@ -50,6 +50,18 @@ class Main extends JFrame {
         public void paint(Graphics g) {
             RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
             ((Graphics2D)g).setRenderingHints(rh);
+
+            // Calculate frame rate
+        long currentTime = System.currentTimeMillis();
+        long howLong = currentTime - lastUpdateTime;
+        lastUpdateTime = currentTime;
+
+        // Draw additional information
+        g.setColor(Color.BLACK);
+        g.drawString("Simulator Speed: " + (int)(1000.0 / howLong) + " fps", 10, Main.HEIGHT + 20);
+        g.drawString("Population Size: " + p.getPopulationSize(), 10, Main.HEIGHT + 40);
+        g.drawString("Sick People: " + p.getNumberSick(), 10, Main.HEIGHT + 60);
+        g.drawString("Immune People: " + p.getNumberImmune(), 10, Main.HEIGHT + 80);
 
             p.update();
 

@@ -6,6 +6,31 @@ class Population {
 	public ArrayList<Simulant> sims = new ArrayList<Simulant>();
 	public Random rand = new Random();
 
+	public int getPopulationSize() {
+        return sims.size();
+    }
+
+	public int getNumberSick() {
+        int sickCount = 0;
+        for (Simulant s : sims) {
+            if (s.sick > 0) {
+                sickCount++;
+            }
+        }
+        return sickCount;
+    }
+
+    public int getNumberImmune() {
+        int immuneCount = 0;
+        for (Simulant s : sims) {
+            if (s.immune) {
+                immuneCount++;
+            }
+        }
+        return immuneCount;
+    }
+
+
 	public Population() {
 		for (int i = 0; i < Main.SIMS; i++) {
 			sims.add(new Simulant());
@@ -209,33 +234,37 @@ class Population {
 	 *         order is determined by the `compareTo` method on the simulants.
 	 **/
 	public ArrayList<Simulant> sort() {
-		
-		ArrayList<Simulant> sorter = new ArrayList<Simulant>();
-
-		for (Simulant dim : sims) {
-			sorter.add(dim);
-		}
-
-		if (sorter.size() == 0) {
-
-		} else if (sorter.size() == 1) {
-
-		} else {
-
-			for (int i = 0; i < sorter.size() - 1; i++) {
-				for (int j = sorter.size() - 1; j > i; j--) {
-					if (sorter.get(i).sick > sorter.get(j).sick) {
-						Simulant temp = sorter.get(i);
-						sorter.set(i, sorter.get(j));
-						sorter.set(j, temp);
-					}
-
-				}
-			}
-
-		}
+		ArrayList<Simulant> sorter = new ArrayList<>(sims);
+		quickSort(sorter, 0, sorter.size() - 1);
 		return sorter;
-
 	}
+	
+	private void quickSort(ArrayList<Simulant> sorter, int low, int high) {
+		if (low < high) {
+			int pivotIndex = partition(sorter, low, high);
+			quickSort(sorter, low, pivotIndex - 1);
+			quickSort(sorter, pivotIndex + 1, high);
+		}
+	}
+	
+	private int partition(ArrayList<Simulant> sorter, int low, int high) {
+		Simulant pivot = sorter.get(high);
+		int i = low - 1;
+		for (int j = low; j < high; j++) {
+			if (sorter.get(j).compareTo(pivot) <= 0) {
+				i++;
+				swap(sorter, i, j);
+			}
+		}
+		swap(sorter, i + 1, high);
+		return i + 1;
+	}
+	
+	private void swap(ArrayList<Simulant> sorter, int i, int j) {
+		Simulant temp = sorter.get(i);
+		sorter.set(i, sorter.get(j));
+		sorter.set(j, temp);
+	}
+	
 
 }
